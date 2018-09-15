@@ -117,7 +117,7 @@ class BoardFactory:
         self.remaining_mines_amt.label.config(textvariable=self.remaining_mines_var)
 
         self.restart_button = ConfigConfirm(self.status_frame, ':)', True, 9, 9, 10)
-        self.restart_button.pack(side='top')  # TODO: 1) delete old stuff, 2) restart game (stored values)
+        self.restart_button.button.pack(side='top')  # TODO: 1) delete old stuff, 2) restart game (stored values)
 
         self.status_frame.pack(side='top',  fill='x')
 
