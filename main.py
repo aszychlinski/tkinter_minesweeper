@@ -14,9 +14,9 @@ class ConfigLabel:
 
 class ConfigEntry:
     def __init__(self, master):
-        self.entry = tk.Entry(master)
+        self.entry = tk.Entry(master, justify='right')
         self.entry.pack(side='left')
-        self.value = 0  # TODO: o co tu chodziło?!
+        self.entry.insert(0, '0')
         ConfigConfirm.start_items.append(self)
 
     def __repr__(self):
@@ -27,10 +27,11 @@ class ConfigConfirm:
 
     start_items = []  # TODO: revert in preparation for reset and destroy
 
-    def __init__(self, master, text, *args):
+    def __init__(self, master, text, preset, *args):
         self.button = tk.Button(master, command=self.forward_values, text=text)
         self.button.pack(side='left')
         self.bound_entries = args
+        self.preset = preset
         self.__class__.start_items.append(self)
 
     def forward_values(self):
@@ -43,21 +44,28 @@ class ConfigConfirm:
                 except AttributeError:
                     y.entry.config(state='disabled')
 
-        try:
-            for x in self.bound_entries:
-                int(x.entry.get())
-        except ValueError:
-            pass
-        except AttributeError:
+        if self.preset:
+            row_entry.entry.delete(0, 'end')
+            row_entry.entry.insert(0, self.bound_entries[0])
+            column_entry.entry.delete(0, 'end')
+            column_entry.entry.insert(0, self.bound_entries[1])
+            mines_entry.entry.delete(0, 'end')
+            mines_entry.entry.insert(0, self.bound_entries[2])
             disable_all_start_buttons()
             board = BoardFactory(self.bound_entries[0], self.bound_entries[1], self.bound_entries[2])
         else:
-            disable_all_start_buttons()
-            values = []
-            for x in self.bound_entries:
-                values.append(x.entry.get())
-            rows, columns, mines = values
-            board = BoardFactory(rows, columns, mines)
+            try:
+                for x in self.bound_entries:
+                    int(x.entry.get())
+            except ValueError:
+                pass
+            else:
+                disable_all_start_buttons()
+                values = []
+                for x in self.bound_entries:
+                    values.append(x.entry.get())
+                rows, columns, mines = values
+                board = BoardFactory(rows, columns, mines)
 
 
 class GameFrame(tk.Frame):
@@ -250,16 +258,16 @@ class FieldButton:
 # top-of-screen config area TODO: move it somewhere else?
 preset_frame = tk.Frame(root)
 preset_sizes = ConfigLabel(preset_frame, 'Preset sizes: ')
-beginner_size = ConfigConfirm(preset_frame, 'Beginner', 9, 9, 10)
-intermediate_size = ConfigConfirm(preset_frame, 'Intermediate', 16, 16, 40)  # TODO: forward to field and process
-expert_size = ConfigConfirm(preset_frame, 'Expert', 16, 30, 99)
+beginner_size = ConfigConfirm(preset_frame, 'Beginner', True, 9, 9, 10)
+intermediate_size = ConfigConfirm(preset_frame, 'Intermediate', True, 16, 16, 40)  # TODO: forward to field and process
+expert_size = ConfigConfirm(preset_frame, 'Expert', True, 16, 30, 99)
 preset_frame.pack(side='top', fill='x')
 
 config_frame = tk.Frame(root)
 row_label, row_entry = ConfigLabel(config_frame, 'Rows: '), ConfigEntry(config_frame)
 column_label, column_entry = ConfigLabel(config_frame, 'Columns: '), ConfigEntry(config_frame)
 mines_label, mines_entry = ConfigLabel(config_frame, 'Mines: '), ConfigEntry(config_frame)
-config_confirm = ConfigConfirm(config_frame, 'Generate', row_entry, column_entry, mines_entry)
+config_confirm = ConfigConfirm(config_frame, 'Generate', False, row_entry, column_entry, mines_entry)
 config_frame.pack(side='top', fill='x')
 
 root.mainloop()
