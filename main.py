@@ -19,9 +19,6 @@ class ConfigEntry:
         self.entry.insert(0, '0')
         ConfigConfirm.start_items.append(self)
 
-    def __repr__(self):
-        return str(self.value)  # to i powyzej chyba tylko do debuga bylo?
-
 
 class ConfigConfirm:
 
