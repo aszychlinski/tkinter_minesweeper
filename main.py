@@ -34,6 +34,8 @@ class ConfigConfirm:
         self.__class__.start_items.append(self)
 
     def forward_values(self):
+        global board
+
         def disable_all_start_buttons():
             for y in ConfigConfirm.start_items:
                 try:
@@ -48,14 +50,14 @@ class ConfigConfirm:
             pass
         except AttributeError:
             disable_all_start_buttons()
-            BoardFactory(self.bound_entries[0], self.bound_entries[1], self.bound_entries[2])
+            board = BoardFactory(self.bound_entries[0], self.bound_entries[1], self.bound_entries[2])
         else:
             disable_all_start_buttons()
             values = []
             for x in self.bound_entries:
                 values.append(x.entry.get())
             rows, columns, mines = values
-            BoardFactory(rows, columns, mines)
+            board = BoardFactory(rows, columns, mines)
 
 
 class GameFrame(tk.Frame):
@@ -83,9 +85,11 @@ class BoardFactory:
         self.target_mines, self.undistributed_mines = int(mines), int(mines)
         self.rows = []
         self.columns = []  # not used?
-        self.buttons, self.undistributed_buttons = [], []
+        self.buttons, self.undistributed_buttons, self.lethal_buttons = [], [], []
+        self.flagged_buttons = 0
         self.button_uids = [*reversed(list(range(1, self.target_rows * self.target_columns + 1)))]
         self.gameframe = GameFrame(root)
+        self.generate_status_frame()
         self.make_rows()
         self.make_columns()
         self.distribute_mines()
@@ -95,7 +99,15 @@ class BoardFactory:
         # for x in self.buttons: print(x.y)
         for x in self.rows: print (x.mybuttons)
         # print(self.target_columns)
-        print(globals())
+
+    def generate_status_frame(self):
+        self.status_frame = tk.Frame(root)
+        self.remaining_mines_var = tk.IntVar()
+        self.remaining_mines_var.set(self.target_mines - self.flagged_buttons)
+        self.remaining_mines_txt = ConfigLabel(self.status_frame, 'Remaining mines: ')
+        self.remaining_mines_amt = ConfigLabel(self.status_frame, '')
+        self.remaining_mines_amt.label.config(textvariable=self.remaining_mines_var)
+        self.status_frame.pack(side='top',  fill='x')
 
     def make_rows(self):
         for x in range(self.target_rows):
@@ -119,7 +131,9 @@ class BoardFactory:
         shuffle(self.buttons)
         self.undistributed_buttons = self.buttons[:]
         while self.undistributed_mines > 0:
-            self.undistributed_buttons.pop().lethal = True
+            temp = self.undistributed_buttons.pop()
+            temp.lethal = True
+            self.lethal_buttons.append(temp)
             self.undistributed_mines -= 1
 
     def count_neighbours(self):
@@ -222,7 +236,11 @@ class FieldButton:
                 self.button.config(text='')
             if self.clicks % 3 == 1:
                 self.button.config(text='P')
+                board.flagged_buttons += 1
+                board.remaining_mines_var.set(board.target_mines - board.flagged_buttons)
             if self.clicks % 3 == 2:
+                board.flagged_buttons -= 1
+                board.remaining_mines_var.set(board.target_mines - board.flagged_buttons)
                 self.button.config(text=u'\u2BD1')
 
     def get_xpos(self):
