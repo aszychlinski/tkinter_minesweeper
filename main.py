@@ -231,8 +231,7 @@ class FieldButton:
 
 # top-of-screen config area TODO: move it somewhere else?
 preset_frame = tk.Frame(root)
-preset_sizes = tk.Label(preset_frame, text='Preset sizes:')
-preset_sizes.pack(side='left')
+preset_sizes = ConfigLabel(preset_frame, 'Preset sizes: ')
 beginner_size = ConfigConfirm(preset_frame, 'Beginner', 9, 9, 10)
 intermediate_size = ConfigConfirm(preset_frame, 'Intermediate', 16, 16, 40)  # TODO: forward to field and process
 expert_size = ConfigConfirm(preset_frame, 'Expert', 16, 30, 99)
