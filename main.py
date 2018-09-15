@@ -115,6 +115,10 @@ class BoardFactory:
         self.remaining_mines_txt = ConfigLabel(self.status_frame, 'Remaining mines: ')
         self.remaining_mines_amt = ConfigLabel(self.status_frame, '')
         self.remaining_mines_amt.label.config(textvariable=self.remaining_mines_var)
+
+        self.restart_button = ConfigConfirm(self.status_frame, ':)', True, 9, 9, 10)
+        self.restart_button.pack(side='top')  # TODO: 1) delete old stuff, 2) restart game (stored values)
+
         self.status_frame.pack(side='top',  fill='x')
 
     def make_rows(self):
@@ -162,28 +166,28 @@ class BoardFactory:
                     none_below = True
 
                 if not none_above and not none_left:
-                        neighbours.append(self.rows[x.master.rownum - 1].mybuttons[x.x - 1])
+                    neighbours.append(self.rows[x.master.rownum - 1].mybuttons[x.x - 1])
 
                 if not none_above:
-                        neighbours.append(self.rows[x.master.rownum - 1].mybuttons[x.x])
+                    neighbours.append(self.rows[x.master.rownum - 1].mybuttons[x.x])
 
                 if not none_above and not none_right:
-                        neighbours.append(self.rows[x.master.rownum - 1].mybuttons[x.x + 1])
+                    neighbours.append(self.rows[x.master.rownum - 1].mybuttons[x.x + 1])
 
                 if not none_left:
-                        neighbours.append(x.master.mybuttons[x.x - 1])
+                    neighbours.append(x.master.mybuttons[x.x - 1])
 
                 if not none_right:
-                        neighbours.append(x.master.mybuttons[x.x + 1])
+                    neighbours.append(x.master.mybuttons[x.x + 1])
 
                 if not none_below and not none_left:
-                        neighbours.append(self.rows[x.master.rownum + 1].mybuttons[x.x - 1])
+                    neighbours.append(self.rows[x.master.rownum + 1].mybuttons[x.x - 1])
 
                 if not none_below:
-                        neighbours.append(self.rows[x.master.rownum + 1].mybuttons[x.x])
+                    neighbours.append(self.rows[x.master.rownum + 1].mybuttons[x.x])
 
                 if not none_below and not none_right:
-                        neighbours.append(self.rows[x.master.rownum + 1].mybuttons[x.x + 1])
+                    neighbours.append(self.rows[x.master.rownum + 1].mybuttons[x.x + 1])
 
                 for z in neighbours:
                     for a in self.buttons:
@@ -259,7 +263,7 @@ class FieldButton:
 preset_frame = tk.Frame(root)
 preset_sizes = ConfigLabel(preset_frame, 'Preset sizes: ')
 beginner_size = ConfigConfirm(preset_frame, 'Beginner', True, 9, 9, 10)
-intermediate_size = ConfigConfirm(preset_frame, 'Intermediate', True, 16, 16, 40)  # TODO: forward to field and process
+intermediate_size = ConfigConfirm(preset_frame, 'Intermediate', True, 16, 16, 40)
 expert_size = ConfigConfirm(preset_frame, 'Expert', True, 16, 30, 99)
 preset_frame.pack(side='top', fill='x')
 
