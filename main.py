@@ -34,12 +34,12 @@ class ConfigConfirm:
     def forward_values(self):
         global board
 
-        def disable_all_start_buttons():
-            for y in ConfigConfirm.start_items:
-                try:
-                    y.button.config(state='disabled')
-                except AttributeError:
-                    y.entry.config(state='disabled')
+        # def disable_all_start_buttons():
+        #     for y in ConfigConfirm.start_items:
+        #         try:
+        #             y.button.config(state='disabled')
+        #         except AttributeError:
+        #             y.entry.config(state='disabled')
 
         if self.preset:
             row_entry.entry.delete(0, 'end')
@@ -48,7 +48,7 @@ class ConfigConfirm:
             column_entry.entry.insert(0, self.bound_entries[1])
             mines_entry.entry.delete(0, 'end')
             mines_entry.entry.insert(0, self.bound_entries[2])
-            disable_all_start_buttons()
+            # disable_all_start_buttons()
             board = BoardFactory(self.bound_entries[0], self.bound_entries[1], self.bound_entries[2])
         else:
             try:
@@ -57,7 +57,7 @@ class ConfigConfirm:
             except ValueError:
                 pass
             else:
-                disable_all_start_buttons()
+                # disable_all_start_buttons()
                 values = []
                 for x in self.bound_entries:
                     values.append(x.entry.get())
