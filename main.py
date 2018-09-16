@@ -134,7 +134,7 @@ class BoardFactory:
         self.restart_button.button.config(font='Wingdings')
         self.restart_button.button.pack(side='top')
 
-        self.status_frame.pack(side='top',  fill='x')
+        self.status_frame.pack(side='top', fill='x')
 
     def make_rows(self):
         for x in range(self.target_rows):
