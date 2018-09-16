@@ -4,6 +4,7 @@ from random import shuffle
 
 root = tk.Tk()
 root.title('mine')  # TODO: add proper title
+previous_board_info = []
 
 
 class ConfigLabel:
@@ -33,6 +34,7 @@ class ConfigConfirm:
 
     def forward_values(self):
         global board
+        global previous_board_info
 
         # def disable_all_start_buttons():
         #     for y in ConfigConfirm.start_items:
@@ -50,13 +52,14 @@ class ConfigConfirm:
             del board
 
         if self.preset:
-            row_entry.entry.delete(0, 'end')
+            row_entry.entry.delete(0, 'end')  # TODO: is it necessary to keep it in an if when I am forwarding to entry?
             row_entry.entry.insert(0, self.bound_entries[0])
             column_entry.entry.delete(0, 'end')
             column_entry.entry.insert(0, self.bound_entries[1])
             mines_entry.entry.delete(0, 'end')
             mines_entry.entry.insert(0, self.bound_entries[2])
             # disable_all_start_buttons()
+            previous_board_info = [self.bound_entries[0], self.bound_entries[1], self.bound_entries[2]]
             board = BoardFactory(self.bound_entries[0], self.bound_entries[1], self.bound_entries[2])
         else:
             try:
@@ -70,6 +73,7 @@ class ConfigConfirm:
                 for x in self.bound_entries:
                     values.append(x.entry.get())
                 rows, columns, mines = values
+                previous_board_info = [rows, columns, mines]
                 board = BoardFactory(rows, columns, mines)
 
 
@@ -121,8 +125,14 @@ class BoardFactory:
         self.remaining_mines_amt = ConfigLabel(self.status_frame, '')
         self.remaining_mines_amt.label.config(textvariable=self.remaining_mines_var)
 
-        self.restart_button = ConfigConfirm(self.status_frame, ':)', True, 9, 9, 10)
-        self.restart_button.button.pack(side='top')  # TODO: 1) delete old stuff, 2) restart game (stored values)
+        self.time_elapsed_amt = ConfigLabel(self.status_frame, '99')
+        self.time_elapsed_amt.label.pack(side='right')
+        self.time_elapsed_txt = ConfigLabel(self.status_frame, 'Time elapsed: ')
+        self.time_elapsed_txt.label.pack(side='right')
+
+        self.restart_button = ConfigConfirm(self.status_frame, '\u263A', True, *previous_board_info)
+        self.restart_button.button.config(font='Wingdings')
+        self.restart_button.button.pack(side='top')
 
         self.status_frame.pack(side='top',  fill='x')
 
