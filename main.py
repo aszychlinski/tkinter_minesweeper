@@ -40,6 +40,14 @@ class ConfigConfirm:
         #             y.button.config(state='disabled')
         #         except AttributeError:
         #             y.entry.config(state='disabled')
+        if 'board' in globals().keys():
+            for x in board.buttons:
+                x.button.destroy()
+            for y in board.rows:
+                y.destroy()
+            board.status_frame.destroy()
+            board.gameframe.destroy()
+            del board
 
         if self.preset:
             row_entry.entry.delete(0, 'end')
