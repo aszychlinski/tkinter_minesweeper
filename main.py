@@ -225,15 +225,32 @@ class FieldButton:
         self.master = master
         self.y = master.rownum
         self.x = 0
+        self.click_pending = False
+        self.click_aborted = False
         self.button = tk.Button(master, height=1, width=2, font='Wingdings')
         self.button.pack()  # TODO: figure if this should be outside the class; 26.08 - probably not?
-        self.button.bind("<Button-1>", self.leftclick)
+        self.button.bind("<Button-1>", self.start_click)
+        self.button.bind("<Leave>", self.abort_click)
+        self.button.bind("<ButtonRelease-1>", self.resolve_click)
         self.button.bind("<Button-3>", self.rightclick)
 
     def __repr__(self):
         return self.uid
 
-    def leftclick(self, event_info_which_is_not_used):
+    def start_click(self, event_info_which_is_not_used):
+        self.click_pending = True
+
+    def abort_click(self, event_info_which_is_not_used):
+        if self.click_pending:
+            self.click_aborted = True
+
+    def resolve_click(self, event_info_which_is_not_used):
+        if self.click_pending and not self.click_aborted:
+            self.leftclick()
+        else:
+            self.click_pending, self.click_aborted = False, False
+
+    def leftclick(self):
         border_list = []
         if self.clicks % 3 == 1:
             pass
@@ -247,11 +264,11 @@ class FieldButton:
             if self.neighbour_mines == 0:
                 for x in self.neighbour_buttons:
                     if x.neighbour_mines == 0 and not x.lethal and not x.block_recursion:
-                        x.leftclick('')
+                        x.leftclick()
                     elif not x.lethal and not x.block_recursion:
                         border_list.append(x)
             for y in border_list:
-                y.leftclick('')
+                y.leftclick()
             print(self.uid, self.x, self.y, print(self.neighbour_buttons), self.neighbour_mines)
 
     def rightclick(self, event_info_which_is_not_used):
