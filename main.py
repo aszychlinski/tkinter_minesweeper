@@ -221,7 +221,9 @@ class FieldButton:
         self.neighbour_mines = 0
         self.neighbour_buttons = []
         self.block_recursion = False
-        self.glyphs = ['', u'\u278A', u'\u278B', u'\u278C', u'\u278D', u'\u278E', u'\u278F', u'\u2790', u'\u2791']
+        self.neighbour_colours = {0: [''], 1: [u'\u278A', 'steelblue1'], 2: [u'\u278B', 'palegreen'],
+                                  3: [u'\u278C', 'salmon'], 4: [u'\u278D', 'navy'], 5: [u'\u278E', 'red4'],
+                                  6: [u'\u278F', 'turquoise'], 7: [u'\u2790', 'black'], 8: [u'\u2791', 'gold']}
         self.master = master
         self.y = master.rownum
         self.x = 0
@@ -260,7 +262,9 @@ class FieldButton:
         else:
             self.revealed = True
             self.block_recursion = True
-            self.button.config(relief='groove', state='disabled', text=self.glyphs[self.neighbour_mines])
+            self.button.config(relief='groove', state='disabled', text=self.neighbour_colours[self.neighbour_mines][0])
+            if self.neighbour_mines:
+                self.button.config(bg=self.neighbour_colours[self.neighbour_mines][1])
             if self.neighbour_mines == 0:
                 for x in self.neighbour_buttons:
                     if x.neighbour_mines == 0 and not x.lethal and not x.block_recursion:
