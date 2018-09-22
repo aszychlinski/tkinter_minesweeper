@@ -221,7 +221,7 @@ class FieldButton:
         self.neighbour_mines = 0
         self.neighbour_buttons = []
         self.block_recursion = False
-        self.neighbour_colours = {0: [''], 1: [u'\u278A', 'steelblue1'], 2: [u'\u278B', 'palegreen'],
+        self.neighbour_colours = {0: ['', 'gray85'], 1: [u'\u278A', 'steelblue1'], 2: [u'\u278B', 'palegreen'],
                                   3: [u'\u278C', 'salmon'], 4: [u'\u278D', 'navy'], 5: [u'\u278E', 'red4'],
                                   6: [u'\u278F', 'turquoise'], 7: [u'\u2790', 'black'], 8: [u'\u2791', 'gold']}
         self.master = master
@@ -229,7 +229,7 @@ class FieldButton:
         self.x = 0
         self.click_pending = False
         self.click_aborted = False
-        self.button = tk.Button(master, height=1, width=2, font='Wingdings')
+        self.button = tk.Button(master, height=1, width=2, bg='gray90', font='Wingdings')
         self.button.pack()  # TODO: figure if this should be outside the class; 26.08 - probably not?
         self.button.bind("<Button-1>", self.start_click)
         self.button.bind("<Leave>", self.abort_click)
@@ -262,9 +262,8 @@ class FieldButton:
         else:
             self.revealed = True
             self.block_recursion = True
-            self.button.config(relief='groove', state='disabled', text=self.neighbour_colours[self.neighbour_mines][0])
-            if self.neighbour_mines:
-                self.button.config(bg=self.neighbour_colours[self.neighbour_mines][1])
+            self.button.config(relief='groove', state='disabled', text=self.neighbour_colours[self.neighbour_mines][0],
+                               bg=self.neighbour_colours[self.neighbour_mines][1])
             if self.neighbour_mines == 0:
                 for x in self.neighbour_buttons:
                     if x.neighbour_mines == 0 and not x.lethal and not x.block_recursion:
