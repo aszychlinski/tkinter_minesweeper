@@ -125,8 +125,8 @@ class BoardFactory:
         self.time_elapsed_txt = ConfigLabel(self.status_frame, 'Time elapsed: ')
         self.time_elapsed_txt.label.pack(side='right')
 
-        self.restart_button = ConfigConfirm(self.status_frame, '\u263A', True, *previous_board_info)
-        self.restart_button.button.config(font='Wingdings')
+        self.restart_button = ConfigConfirm(self.status_frame, 'J', True, *previous_board_info)
+        self.restart_button.button.config(font='Wingdings', bg='yellow')
         self.restart_button.button.pack(side='top')
 
         self.status_frame.pack(side='top', fill='x')
@@ -251,15 +251,20 @@ class FieldButton:
         return self.uid
 
     def start_click(self, event_info_which_is_not_used):
-        self.click_pending = True
+        if not self.game_over:
+            self.click_pending = True
+            board.restart_button.button.config(text='K')
 
     def abort_click(self, event_info_which_is_not_used):
-        if self.click_pending:
+        if self.click_pending and not self.game_over:
             self.click_aborted = True
+            board.restart_button.button.config(text='J')
 
     def resolve_click(self, event_info_which_is_not_used):
         if self.click_pending and not self.click_aborted:
             self.leftclick()
+            if not self.game_over:
+                board.restart_button.button.config(text='J')
         else:
             self.click_pending, self.click_aborted = False, False
 
