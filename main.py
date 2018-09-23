@@ -1,10 +1,20 @@
 import tkinter as tk
+import threading as th
 from random import shuffle
+from time import sleep
 
 
 root = tk.Tk()
 root.title('mine')  # TODO: add proper title
 previous_board_info = []
+
+
+class TimerThread(th.Thread):
+    def __init__(self):
+        super().__init__(self)
+
+    def run(self):
+        pass
 
 
 class ConfigLabel:
