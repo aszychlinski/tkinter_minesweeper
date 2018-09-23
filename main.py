@@ -11,10 +11,20 @@ previous_board_info = []
 
 class TimerThread(th.Thread):
     def __init__(self):
-        super().__init__(self)
+        th.Thread.__init__(self)
+        self.value = 0
+        self.exit = False
 
     def run(self):
-        pass
+        while not FieldButton.game_over and not self.exit:
+            sleep(1)
+            if not FieldButton.game_over and not self.exit:
+                self.value += 1
+                try:
+                    board.time_elapsed_var.set(self.value)
+                except Exception:
+                    return None
+        return None
 
 
 class ConfigLabel:
@@ -51,6 +61,7 @@ class ConfigConfirm:
                 x.button.destroy()
             for y in board.rows:
                 y.destroy()
+            board.timer.exit = True
             board.status_frame.destroy()
             board.gameframe.destroy()
             del board
@@ -116,6 +127,7 @@ class BoardFactory:
         self.make_columns()
         self.distribute_mines()
         self.count_neighbours()
+        self.any_leftclicked = False
         # debug
         print(self.button_uids, '<- ok if empty')
         # for x in self.buttons: print(x.y)
@@ -130,7 +142,11 @@ class BoardFactory:
         self.remaining_mines_amt = ConfigLabel(self.status_frame, '')
         self.remaining_mines_amt.label.config(textvariable=self.remaining_mines_var)
 
-        self.time_elapsed_amt = ConfigLabel(self.status_frame, '99')
+        self.timer = TimerThread()
+        self.time_elapsed_var = tk.IntVar()
+        self.time_elapsed_var.set(0)
+        self.time_elapsed_amt = ConfigLabel(self.status_frame, '')
+        self.time_elapsed_amt.label.config(textvariable=self.time_elapsed_var)
         self.time_elapsed_amt.label.pack(side='right')
         self.time_elapsed_txt = ConfigLabel(self.status_frame, 'Time elapsed: ')
         self.time_elapsed_txt.label.pack(side='right')
@@ -298,6 +314,9 @@ class FieldButton:
                         border_list.append(x)
             for y in border_list:
                 y.leftclick()
+            if not board.any_leftclicked:
+                board.any_leftclicked = True
+                board.timer.start()
             print(self.uid, self.x, self.y, print(self.neighbour_buttons), self.neighbour_mines)
 
     def rightclick(self, event_info_which_is_not_used):
