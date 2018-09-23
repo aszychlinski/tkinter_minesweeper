@@ -313,8 +313,10 @@ class FieldButton:
 # top-of-screen config area TODO: move it somewhere else?
 preset_frame = tk.Frame(root)
 preset_sizes = ConfigLabel(preset_frame, 'Preset sizes: ')
+demo_size = ConfigConfirm(preset_frame, 'Demo', True, 10, 10, 5)
 beginner_size = ConfigConfirm(preset_frame, 'Beginner', True, 9, 9, 10)
 intermediate_size = ConfigConfirm(preset_frame, 'Intermediate', True, 16, 16, 40)
+my_size = ConfigConfirm(preset_frame, '1920x1080 fullscreen', True, 23, 40, 99)
 expert_size = ConfigConfirm(preset_frame, 'Expert', True, 16, 30, 99)
 preset_frame.pack(side='top', fill='x')
 
