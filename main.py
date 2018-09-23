@@ -60,6 +60,7 @@ class ConfigConfirm:
             mines_entry.entry.insert(0, self.bound_entries[2])
             # disable_all_start_buttons()
             previous_board_info = [self.bound_entries[0], self.bound_entries[1], self.bound_entries[2]]
+            FieldButton.game_over = False
             board = BoardFactory(self.bound_entries[0], self.bound_entries[1], self.bound_entries[2])
         else:
             try:
@@ -74,6 +75,7 @@ class ConfigConfirm:
                     values.append(x.entry.get())
                 rows, columns, mines = values
                 previous_board_info = [rows, columns, mines]
+                FieldButton.game_over = False
                 board = BoardFactory(rows, columns, mines)
 
 
@@ -211,8 +213,29 @@ class BoardFactory:
                             if a.lethal:
                                 x.neighbour_mines += 1
 
+    def die(self):
+        FieldButton.game_over = True
+        # TODO: stop timer
+        # for x in self.lethal_buttons:
+        #     if x.clicks % 3 != 1:
+        #         x.button.config(text='M')
+        #     else:
+        #         x.button.config(bg='lawn green')
+        for x in self.buttons:
+            if x.lethal:
+                if x.clicks % 3 != 1:
+                    x.button.config(text='M')
+                else:
+                    x.button.config(bg='lawn green')
+            elif x.clicks % 3 == 1:
+                x.button.config(fg='red', bg='black')
+        board.restart_button.button.config(text='L')
+
 
 class FieldButton:
+
+    game_over = False
+
     def __init__(self, master, uid):
         self.uid = 'b' + str(uid)
         self.revealed = False
@@ -254,11 +277,11 @@ class FieldButton:
 
     def leftclick(self):
         border_list = []
-        if self.clicks % 3 == 1:
+        if self.clicks % 3 == 1 or self.game_over:
             pass
         elif self.lethal:
-            # TODO: def die()
-            self.button.config(bg='red', text='M')  # TODO: does Wingdings work on non-Win OS's?
+            self.button.config(bg='red')  # TODO: does Wingdings work on non-Win OS's?
+            board.die()
         else:
             self.revealed = True
             self.block_recursion = True
@@ -275,7 +298,7 @@ class FieldButton:
             print(self.uid, self.x, self.y, print(self.neighbour_buttons), self.neighbour_mines)
 
     def rightclick(self, event_info_which_is_not_used):
-        if self.revealed:
+        if self.revealed or self.game_over:
             pass
         else:
             self.clicks += 1
