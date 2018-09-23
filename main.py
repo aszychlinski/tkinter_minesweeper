@@ -36,12 +36,6 @@ class ConfigConfirm:
         global board
         global previous_board_info
 
-        # def disable_all_start_buttons():
-        #     for y in ConfigConfirm.start_items:
-        #         try:
-        #             y.button.config(state='disabled')
-        #         except AttributeError:
-        #             y.entry.config(state='disabled')
         if 'board' in globals().keys():
             for x in board.buttons:
                 x.button.destroy()
@@ -69,7 +63,6 @@ class ConfigConfirm:
             except ValueError:
                 pass
             else:
-                # disable_all_start_buttons()
                 values = []
                 for x in self.bound_entries:
                     values.append(x.entry.get())
@@ -216,11 +209,6 @@ class BoardFactory:
     def die(self):
         FieldButton.game_over = True
         # TODO: stop timer
-        # for x in self.lethal_buttons:
-        #     if x.clicks % 3 != 1:
-        #         x.button.config(text='M')
-        #     else:
-        #         x.button.config(bg='lawn green')
         for x in self.buttons:
             if x.lethal:
                 if x.clicks % 3 != 1:
