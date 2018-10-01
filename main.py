@@ -62,9 +62,10 @@ class ConfigConfirm:
             for y in board.rows:
                 y.destroy()
             board.timer.exit = True
+            board.start_helper.destroy()
             board.status_frame.destroy()
             board.gameframe.destroy()
-            del board
+            # del board
 
         if self.preset:
             row_entry.entry.delete(0, 'end')  # TODO: is it necessary to keep it in an if when I am forwarding to entry?
@@ -129,6 +130,8 @@ class BoardFactory:
         self.distribute_mines()
         self.count_neighbours()
         self.any_leftclicked = False
+        self.start_helper = tk.Button(preset_frame, text='Free first move!', bg='green', command=self.first_move)
+        self.start_helper.pack(side='left')
         # debug
         # print(self.button_uids, '<- ok if empty')
         # for x in self.buttons: print(x.y)
@@ -233,6 +236,14 @@ class BoardFactory:
                             if a.lethal:
                                 x.neighbour_mines += 1
 
+    def first_move(self):
+        for x in sorted(self.buttons, key=lambda button: button.neighbour_mines):
+            if x.lethal:
+                continue
+            else:
+                x.leftclick()
+                break
+
     def lose(self):
         FieldButton.game_over = True
         for x in self.buttons:
@@ -313,7 +324,7 @@ class FieldButton:
         else:
             self.revealed = True
             self.__class__.revealed_buttons += 1
-            self.block_recursion = True
+            self.block_recursion = True  # TODO: investigate if this is still needed
             self.button.config(relief='groove', state='disabled', text=self.neighbour_colours[self.neighbour_mines][0],
                                bg=self.neighbour_colours[self.neighbour_mines][1])
             if self.neighbour_mines == 0:
@@ -330,6 +341,7 @@ class FieldButton:
             if not board.any_leftclicked:
                 board.any_leftclicked = True
                 board.timer.start()
+                board.start_helper.config(state='disabled', relief='sunken', bg='white')
             print('in progress:', board.target_buttons, FieldButton.revealed_buttons, board.target_mines)
             if board.target_buttons - FieldButton.revealed_buttons == board.target_mines:
                 print('win:', board.target_buttons, FieldButton.revealed_buttons, board.target_mines)
