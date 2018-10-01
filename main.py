@@ -22,7 +22,7 @@ class TimerThread(th.Thread):
                 self.value += 1
                 try:
                     board.time_elapsed_var.set(self.value)
-                except Exception:
+                except RuntimeError:
                     return None
         return None
 
@@ -75,7 +75,7 @@ class ConfigConfirm:
             mines_entry.entry.insert(0, self.bound_entries[2])
             # disable_all_start_buttons()
             previous_board_info = [self.bound_entries[0], self.bound_entries[1], self.bound_entries[2]]
-            FieldButton.game_over = False
+            FieldButton.game_over, FieldButton.revealed_buttons = False, 0
             board = BoardFactory(self.bound_entries[0], self.bound_entries[1], self.bound_entries[2])
         else:
             try:
@@ -89,7 +89,7 @@ class ConfigConfirm:
                     values.append(x.entry.get())
                 rows, columns, mines = values
                 previous_board_info = [rows, columns, mines]
-                FieldButton.game_over = False
+                FieldButton.game_over, FieldButton.revealed_buttons = False, 0
                 board = BoardFactory(rows, columns, mines)
 
 
@@ -116,9 +116,10 @@ class BoardFactory:
         self.target_rows = int(rows)
         self.target_columns, self.undistributed_columns = int(columns), int(columns)
         self.target_mines, self.undistributed_mines = int(mines), int(mines)
+        self.target_buttons = self.target_rows * self.target_columns
         self.rows = []
         self.columns = []  # not used?
-        self.buttons, self.undistributed_buttons, self.lethal_buttons = [], [], []
+        self.buttons, self.undistributed_buttons, self.lethal_buttons = [], [], []  # lethal_buttons not used?
         self.flagged_buttons = 0
         self.button_uids = [*reversed(list(range(1, self.target_rows * self.target_columns + 1)))]
         self.gameframe = GameFrame(root)
@@ -129,9 +130,9 @@ class BoardFactory:
         self.count_neighbours()
         self.any_leftclicked = False
         # debug
-        print(self.button_uids, '<- ok if empty')
+        # print(self.button_uids, '<- ok if empty')
         # for x in self.buttons: print(x.y)
-        for x in self.rows: print (x.mybuttons)
+        # for x in self.rows: print (x.mybuttons)
         # print(self.target_columns)
 
     def generate_status_frame(self):
@@ -232,9 +233,8 @@ class BoardFactory:
                             if a.lethal:
                                 x.neighbour_mines += 1
 
-    def die(self):
+    def lose(self):
         FieldButton.game_over = True
-        # TODO: stop timer
         for x in self.buttons:
             if x.lethal:
                 if x.clicks % 3 != 1:
@@ -245,10 +245,19 @@ class BoardFactory:
                 x.button.config(fg='red', bg='black')
         board.restart_button.button.config(text='L')
 
+    def win(self):
+        FieldButton.game_over = True
+        for x in self.buttons:
+            if not x.revealed:
+                x.button.config(text='P', bg='lawn green')
+        self.remaining_mines_var.set(0)
+        board.restart_button.button.config(text='C')
+
 
 class FieldButton:
 
     game_over = False
+    revealed_buttons = 0
 
     def __init__(self, master, uid):
         self.uid = 'b' + str(uid)
@@ -295,29 +304,37 @@ class FieldButton:
             self.click_pending, self.click_aborted = False, False
 
     def leftclick(self):
-        border_list = []
-        if self.clicks % 3 == 1 or self.game_over:
+        border_set = set()
+        if self.clicks % 3 == 1 or self.game_over or self.revealed:
             pass
         elif self.lethal:
             self.button.config(bg='red')  # TODO: does Wingdings work on non-Win OS's?
-            board.die()
+            board.lose()
         else:
             self.revealed = True
+            self.__class__.revealed_buttons += 1
             self.block_recursion = True
             self.button.config(relief='groove', state='disabled', text=self.neighbour_colours[self.neighbour_mines][0],
                                bg=self.neighbour_colours[self.neighbour_mines][1])
             if self.neighbour_mines == 0:
                 for x in self.neighbour_buttons:
                     if x.neighbour_mines == 0 and not x.lethal and not x.block_recursion:
+                        print('clicking from recursion: ', self.uid)
                         x.leftclick()
                     elif not x.lethal and not x.block_recursion:
-                        border_list.append(x)
-            for y in border_list:
-                y.leftclick()
+                        border_set.add(x)
+            for y in border_set:
+                if not y.revealed:
+                    print('clicking from border_set: ', self.uid)
+                    y.leftclick()
             if not board.any_leftclicked:
                 board.any_leftclicked = True
                 board.timer.start()
-            print(self.uid, self.x, self.y, print(self.neighbour_buttons), self.neighbour_mines)
+            print('in progress:', board.target_buttons, FieldButton.revealed_buttons, board.target_mines)
+            if board.target_buttons - FieldButton.revealed_buttons == board.target_mines:
+                print('win:', board.target_buttons, FieldButton.revealed_buttons, board.target_mines)
+                board.win()
+            # print(self.uid, self.x, self.y, print(self.neighbour_buttons), self.neighbour_mines)
 
     def rightclick(self, event_info_which_is_not_used):
         if self.revealed or self.game_over:
