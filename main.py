@@ -6,6 +6,7 @@ from time import sleep
 
 root = tk.Tk()
 root.title('mine')  # TODO: add proper title
+defaultbg = root.cget('bg')
 previous_board_info = []
 
 
@@ -128,7 +129,7 @@ class BoardFactory:
         self.distribute_mines()
         self.count_neighbours()
         self.any_leftclicked = False
-        self.start_helper = tk.Button(preset_frame, text='Free first move!', bg='green', command=self.first_move)
+        self.start_helper = tk.Button(preset_frame, text='Free first move!', bg='green', command=self.free_first_move)
         self.start_helper.pack(side='left')
 
     def generate_status_frame(self):
@@ -228,13 +229,14 @@ class BoardFactory:
                             if a.lethal:
                                 x.neighbour_mines += 1
 
-    def first_move(self):
-        for x in sorted(self.buttons, key=lambda button: button.neighbour_mines):
-            if x.lethal:
-                continue
-            else:
-                x.leftclick()
-                break
+    def free_first_move(self):
+        if not self.any_leftclicked:
+            for x in sorted(self.buttons, key=lambda button: button.neighbour_mines):
+                if x.lethal:
+                    continue
+                else:
+                    x.leftclick()
+                    break
 
     def lose(self):
         FieldButton.game_over = True
@@ -331,7 +333,7 @@ class FieldButton:
             if not board.any_leftclicked:
                 board.any_leftclicked = True
                 board.timer.start()
-                board.start_helper.config(state='disabled', relief='sunken', bg='white')
+                board.start_helper.config(relief='sunken', bg=defaultbg)
             if board.target_buttons - FieldButton.revealed_buttons == board.target_mines:
                 board.win()
 
