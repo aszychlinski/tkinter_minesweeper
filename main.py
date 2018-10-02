@@ -81,8 +81,14 @@ class ConfigConfirm:
             try:
                 for x in self.bound_entries:
                     int(x.entry.get())
+                    if int(x.entry.get()) < 0:
+                        raise ValueError
+                if int(self.bound_entries[0].entry.get())\
+                        * int(self.bound_entries[1].entry.get())\
+                        < int(self.bound_entries[2].entry.get()):
+                    raise ValueError
             except ValueError:
-                pass
+                pass  # TODO: implement label describing nature of error
             else:
                 values = []
                 for x in self.bound_entries:
