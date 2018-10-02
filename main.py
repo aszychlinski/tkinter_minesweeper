@@ -65,7 +65,6 @@ class ConfigConfirm:
             board.start_helper.destroy()
             board.status_frame.destroy()
             board.gameframe.destroy()
-            # del board
 
         if self.preset:
             row_entry.entry.delete(0, 'end')  # TODO: is it necessary to keep it in an if when I am forwarding to entry?
@@ -74,7 +73,6 @@ class ConfigConfirm:
             column_entry.entry.insert(0, self.bound_entries[1])
             mines_entry.entry.delete(0, 'end')
             mines_entry.entry.insert(0, self.bound_entries[2])
-            # disable_all_start_buttons()
             previous_board_info = [self.bound_entries[0], self.bound_entries[1], self.bound_entries[2]]
             FieldButton.game_over, FieldButton.revealed_buttons = False, 0
             board = BoardFactory(self.bound_entries[0], self.bound_entries[1], self.bound_entries[2])
@@ -132,11 +130,6 @@ class BoardFactory:
         self.any_leftclicked = False
         self.start_helper = tk.Button(preset_frame, text='Free first move!', bg='green', command=self.first_move)
         self.start_helper.pack(side='left')
-        # debug
-        # print(self.button_uids, '<- ok if empty')
-        # for x in self.buttons: print(x.y)
-        # for x in self.rows: print (x.mybuttons)
-        # print(self.target_columns)
 
     def generate_status_frame(self):
         self.status_frame = tk.Frame(root)
@@ -166,7 +159,6 @@ class BoardFactory:
             self.rows.append(GameRow(self.gameframe))
             self.rows[-1].rownum = len(self.rows) - 1
             self.rows[-1].pack(side='top')
-        # self.gameframe.pack(side='left')  # TODO: this does nothing!
 
     def make_columns(self):
         while self.undistributed_columns > 0:
@@ -330,23 +322,18 @@ class FieldButton:
             if self.neighbour_mines == 0:
                 for x in self.neighbour_buttons:
                     if x.neighbour_mines == 0 and not x.lethal and not x.block_recursion:
-                        print('clicking from recursion: ', self.uid)
                         x.leftclick()
                     elif not x.lethal and not x.block_recursion:
                         border_set.add(x)
             for y in border_set:
                 if not y.revealed:
-                    print('clicking from border_set: ', self.uid)
                     y.leftclick()
             if not board.any_leftclicked:
                 board.any_leftclicked = True
                 board.timer.start()
                 board.start_helper.config(state='disabled', relief='sunken', bg='white')
-            print('in progress:', board.target_buttons, FieldButton.revealed_buttons, board.target_mines)
             if board.target_buttons - FieldButton.revealed_buttons == board.target_mines:
-                print('win:', board.target_buttons, FieldButton.revealed_buttons, board.target_mines)
                 board.win()
-            # print(self.uid, self.x, self.y, print(self.neighbour_buttons), self.neighbour_mines)
 
     def rightclick(self, event_info_which_is_not_used):
         if self.revealed or self.game_over:
