@@ -238,7 +238,7 @@ class BoardFactory:
     def free_first_move(self):
         if not self.any_leftclicked:
             for x in sorted(self.buttons, key=lambda button: button.neighbour_mines):
-                if x.lethal:
+                if x.lethal or x.clicks % 3 == 1:
                     continue
                 else:
                     x.leftclick()
@@ -351,13 +351,17 @@ class FieldButton:
             if self.clicks % 3 == 0:
                 self.button.config(text='')
             if self.clicks % 3 == 1:
-                self.button.config(text='P')
                 board.flagged_buttons += 1
                 board.remaining_mines_var.set(board.target_mines - board.flagged_buttons)
+                self.button.config(text='P')
+                if board.remaining_mines_var.get() < 0:
+                    board.remaining_mines_amt.label.config(fg='red')
             if self.clicks % 3 == 2:
                 board.flagged_buttons -= 1
                 board.remaining_mines_var.set(board.target_mines - board.flagged_buttons)
                 self.button.config(text=u'\u2BD1')
+                if board.remaining_mines_var.get() >= 0:
+                    board.remaining_mines_amt.label.config(fg='black')
 
     def get_xpos(self):
         self.x = self.master.mybuttons.index(self.uid)
