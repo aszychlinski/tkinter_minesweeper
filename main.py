@@ -1,10 +1,11 @@
 import tkinter as tk
+import tkinter.tix as tkx
 import threading as th
 from random import shuffle
 from time import sleep
 
 
-root = tk.Tk()
+root = tkx.Tk()
 root.title('mine')  # TODO: add proper title
 defaultbg = root.cget('bg')
 previous_board_info = []
