@@ -7,7 +7,7 @@ from time import sleep
 
 root = tkx.Tk()
 root.focus()
-root.title('mine')  # TODO: add proper title
+root.title('LeftMouse: reveal, RightMouse: flag <> hover over buttons for tooltips')
 defaultbg = root.cget('bg')
 previous_board_info = []
 
@@ -141,6 +141,9 @@ class BoardFactory:
         self.any_leftclicked = False
         self.start_helper = tk.Button(preset_frame, text='Free first move!', bg='green', command=self.free_first_move)
         self.start_helper.pack(side='left')
+        tooltip.bind_widget(self.start_helper, balloonmsg='Reveal a randomly chosen field from among those with the '
+                                                          'least adjacent mines.\nAvailable only if no fields have been'
+                                                          ' revealed yet.')
         error_label.label.config(text='', bg=defaultbg)
 
     def generate_status_frame(self):
@@ -163,6 +166,7 @@ class BoardFactory:
         self.restart_button = ConfigConfirm(self.status_frame, 'J', True, *previous_board_info)
         self.restart_button.button.config(font='Wingdings', bg='yellow')
         self.restart_button.button.pack(side='top')
+        tooltip.bind_widget(self.restart_button.button, balloonmsg='Restart game using current board attributes.')
 
         self.status_frame.pack(side='top', fill='x')
 
@@ -388,9 +392,15 @@ mines_label, mines_entry = ConfigLabel(config_frame, 'Mines: '), ConfigEntry(con
 config_confirm = ConfigConfirm(config_frame, 'Generate', False, row_entry, column_entry, mines_entry)
 config_frame.pack(side='top', fill='x')
 
-tooltip = tkx.Balloon(root, initwait=500)
+tooltip = tkx.Balloon(root, initwait=750, bg=defaultbg)
 tooltip.bind_widget(demo_size.button, balloonmsg='Rows: 10, Columns: 10, Mines: 5')
 tooltip.bind_widget(beginner_size.button, balloonmsg='Rows: 9, Columns: 9, Mines: 10')
+tooltip.bind_widget(intermediate_size.button, balloonmsg='Rows: 16, Columns: 16, Mines: 40')
+tooltip.bind_widget(expert_size.button, balloonmsg='Rows: 16, Columns: 30, Mines: 99')
+tooltip.bind_widget(row_entry.entry, balloonmsg='Amount of horizontal rows.\nMaximum of 18.')
+tooltip.bind_widget(column_entry.entry, balloonmsg='Amount of vertical columns.\nMaximum of 34.')
+tooltip.bind_widget(mines_entry.entry, balloonmsg='Amount of mines on the field.\nMaximum of 612.')
+tooltip.bind_widget(config_confirm.button, balloonmsg='Generate a new board with the values given.')
 
 
 root.mainloop()
