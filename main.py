@@ -4,14 +4,9 @@ import threading as th
 from random import shuffle
 from time import sleep
 
-TCL_DONT_WAIT           = 1<<1
-TCL_WINDOW_EVENTS       = 1<<2
-TCL_FILE_EVENTS         = 1<<3
-TCL_TIMER_EVENTS        = 1<<4
-TCL_IDLE_EVENTS         = 1<<5
-TCL_ALL_EVENTS          = 0
 
 root = tkx.Tk()
+root.focus()
 root.title('mine')  # TODO: add proper title
 defaultbg = root.cget('bg')
 previous_board_info = []
