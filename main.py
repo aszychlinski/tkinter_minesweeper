@@ -76,15 +76,18 @@ class ConfigConfirm:
         else:
             try:
                 for x in self.bound_entries:
+                    errormessage = 'Non-integer argument.'
                     int(x.entry.get())
                     if int(x.entry.get()) < 0:
+                        errormessage = 'Negative argument.'
                         raise ValueError
                 if int(self.bound_entries[0].entry.get())\
                         * int(self.bound_entries[1].entry.get())\
                         < int(self.bound_entries[2].entry.get()):
+                    errormessage = 'More mines than fields.'
                     raise ValueError
             except ValueError:
-                pass  # TODO: implement label describing nature of error
+                error_label.label.config(text=errormessage, bg='red')
             else:
                 values = []
                 for x in self.bound_entries:
@@ -133,6 +136,7 @@ class BoardFactory:
         self.any_leftclicked = False
         self.start_helper = tk.Button(preset_frame, text='Free first move!', bg='green', command=self.free_first_move)
         self.start_helper.pack(side='left')
+        error_label.label.config(text='', bg=defaultbg)
 
     def generate_status_frame(self):
         self.status_frame = tk.Frame(root)
@@ -371,6 +375,8 @@ beginner_size = ConfigConfirm(preset_frame, 'Beginner', True, 9, 9, 10)
 intermediate_size = ConfigConfirm(preset_frame, 'Intermediate', True, 16, 16, 40)
 my_size = ConfigConfirm(preset_frame, '1920x1080 fullscreen', True, 23, 40, 99)
 expert_size = ConfigConfirm(preset_frame, 'Expert', True, 16, 30, 99)
+error_label = ConfigLabel(preset_frame, '')
+error_label.label.pack(side='right')
 preset_frame.pack(side='top', fill='x')
 
 config_frame = tk.Frame(root)
