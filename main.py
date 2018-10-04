@@ -86,6 +86,9 @@ class ConfigConfirm:
                         < int(self.bound_entries[2].entry.get()):
                     errormessage = 'More mines than fields.'
                     raise ValueError
+                if int(self.bound_entries[0].entry.get()) > 18 or int(self.bound_entries[1].entry.get()) > 34:
+                    errormessage = 'Argument exceeds maximum.'
+                    raise ValueError
             except ValueError:
                 error_label.label.config(text=errormessage, bg='red')
             else:
