@@ -7,7 +7,7 @@ from time import sleep
 
 root = tkx.Tk()
 root.focus()
-root.title('LeftMouse: reveal, RightMouse: flag <> hover over buttons for tooltips')
+root.title('LeftMouse: reveal, RightMouse: flag <> hover for tooltips')
 defaultbg = root.cget('bg')
 previous_board_info = []
 
