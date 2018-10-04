@@ -39,19 +39,15 @@ class ConfigEntry:
         self.entry = tk.Entry(master, justify='right')
         self.entry.pack(side='left')
         self.entry.insert(0, '0')
-        ConfigConfirm.start_items.append(self)
 
 
 class ConfigConfirm:
-
-    start_items = []  # TODO: revert in preparation for reset and destroy
 
     def __init__(self, master, text, preset, *args):
         self.button = tk.Button(master, command=self.forward_values, text=text)
         self.button.pack(side='left')
         self.bound_entries = args
         self.preset = preset
-        self.__class__.start_items.append(self)
 
     def forward_values(self):
         global board
@@ -287,7 +283,7 @@ class FieldButton:
         self.click_pending = False
         self.click_aborted = False
         self.button = tk.Button(master, height=1, width=2, bg='gray90', font='Wingdings')
-        self.button.pack()  # TODO: figure if this should be outside the class; 26.08 - probably not?
+        self.button.pack()
         self.button.bind("<Button-1>", self.start_click)
         self.button.bind("<Leave>", self.abort_click)
         self.button.bind("<ButtonRelease-1>", self.resolve_click)
@@ -319,7 +315,7 @@ class FieldButton:
         if self.clicks % 3 == 1 or self.game_over or self.revealed:
             pass
         elif self.lethal:
-            self.button.config(bg='red')  # TODO: does Wingdings work on non-Win OS's?
+            self.button.config(bg='red')
             board.lose()
         else:
             self.revealed = True
@@ -367,7 +363,7 @@ class FieldButton:
         self.x = self.master.mybuttons.index(self.uid)
 
 
-# top-of-screen config area TODO: move it somewhere else?
+# top-of-screen config area
 preset_frame = tk.Frame(root)
 preset_sizes = ConfigLabel(preset_frame, 'Preset sizes: ')
 demo_size = ConfigConfirm(preset_frame, 'Demo', True, 10, 10, 5)
