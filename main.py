@@ -280,7 +280,6 @@ class FieldButton:
         self.clicks = 0
         self.neighbour_mines = 0
         self.neighbour_buttons = []
-        self.block_recursion = False
         self.neighbour_colours = {0: ['', 'gray85'], 1: [u'\u278A', 'steelblue1'], 2: [u'\u278B', 'palegreen'],
                                   3: [u'\u278C', 'salmon'], 4: [u'\u278D', 'navy'], 5: [u'\u278E', 'red4'],
                                   6: [u'\u278F', 'turquoise'], 7: [u'\u2790', 'black'], 8: [u'\u2791', 'gold']}
@@ -327,14 +326,13 @@ class FieldButton:
         else:
             self.revealed = True
             self.__class__.revealed_buttons += 1
-            self.block_recursion = True  # TODO: investigate if this is still needed
             self.button.config(relief='groove', state='disabled', text=self.neighbour_colours[self.neighbour_mines][0],
                                bg=self.neighbour_colours[self.neighbour_mines][1])
             if self.neighbour_mines == 0:
                 for x in self.neighbour_buttons:
-                    if x.neighbour_mines == 0 and not x.lethal and not x.block_recursion:
+                    if x.neighbour_mines == 0 and not x.lethal and not x.revealed:
                         x.leftclick()
-                    elif not x.lethal and not x.block_recursion:
+                    elif not x.lethal and not x.revealed:
                         border_set.add(x)
             for y in border_set:
                 if not y.revealed:
