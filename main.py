@@ -64,7 +64,7 @@ class ConfigConfirm:
             board.gameframe.destroy()
 
         if self.preset:
-            row_entry.entry.delete(0, 'end')  # TODO: is it necessary to keep it in an if when I am forwarding to entry?
+            row_entry.entry.delete(0, 'end')
             row_entry.entry.insert(0, self.bound_entries[0])
             column_entry.entry.delete(0, 'end')
             column_entry.entry.insert(0, self.bound_entries[1])
