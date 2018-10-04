@@ -4,6 +4,12 @@ import threading as th
 from random import shuffle
 from time import sleep
 
+TCL_DONT_WAIT           = 1<<1
+TCL_WINDOW_EVENTS       = 1<<2
+TCL_FILE_EVENTS         = 1<<3
+TCL_TIMER_EVENTS        = 1<<4
+TCL_IDLE_EVENTS         = 1<<5
+TCL_ALL_EVENTS          = 0
 
 root = tkx.Tk()
 root.title('mine')  # TODO: add proper title
@@ -386,5 +392,10 @@ column_label, column_entry = ConfigLabel(config_frame, 'Columns: '), ConfigEntry
 mines_label, mines_entry = ConfigLabel(config_frame, 'Mines: '), ConfigEntry(config_frame)
 config_confirm = ConfigConfirm(config_frame, 'Generate', False, row_entry, column_entry, mines_entry)
 config_frame.pack(side='top', fill='x')
+
+tooltip = tkx.Balloon(root, initwait=500)
+tooltip.bind_widget(demo_size.button, balloonmsg='Rows: 10, Columns: 10, Mines: 5')
+tooltip.bind_widget(beginner_size.button, balloonmsg='Rows: 9, Columns: 9, Mines: 10')
+
 
 root.mainloop()
