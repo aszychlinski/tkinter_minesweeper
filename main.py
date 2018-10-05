@@ -7,9 +7,38 @@ from time import sleep
 
 root = tkx.Tk()
 root.focus()
-root.title('LeftMouse: reveal, RightMouse: flag <> hover for tooltips')
+root.title('F1 for help <> hover for tooltips')
 defaultbg = root.cget('bg')
 previous_board_info = []
+
+
+def close_popup_delete_reference():
+    about.destroy()
+    del globals()['about']
+
+
+def toggle_about(event_info_which_is_not_used):
+    global about
+    if 'about' in globals().keys():
+        close_popup_delete_reference()
+    else:
+        about = tk.Toplevel(root)
+        about.title('F1 to close help')
+        msg = tk.Label(
+            about, justify='left', padx=10, pady=10,
+            text='Left click a field to reveal it. Right click a field to flag it as containing a mine.'
+                 '\n\nA revealed field may display a number. This number describes the amount of adjacent mines.'
+                 '\nIf there is no number, there are no mines adjacent to this field; a chain reaction will occur.'
+                 '\n\nYou win if every remaining unrevealed field contains a mine (they do not have to be flagged).'
+                 '\n\nYou lose if you reveal a field containing a mine.'
+                 '\n\nThe "Free first move!" button is available only if no field has been revealed yet.'
+                 '\nIt reveals a randomly chosen field from among those containing the least adjacent mines.'
+                 '\n\nThe yellow button above the game board generates a new board with the previously used values.')
+        msg.pack(side='top')
+        about.protocol("WM_DELETE_WINDOW", close_popup_delete_reference)
+
+
+root.bind('<F1>', toggle_about)
 
 
 class TimerThread(th.Thread):
