@@ -24,6 +24,7 @@ def toggle_about(event_info_which_is_not_used):
     else:
         about = tk.Toplevel(root)
         about.title('F1 to close help')
+        about.bind('<F1>', toggle_about)
         msg = tk.Label(
             about, justify='left', padx=10, pady=10,
             text='Left click a field to reveal it. Right click a field to flag it as containing a mine.'
