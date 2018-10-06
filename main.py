@@ -162,6 +162,7 @@ class BoardFactory:
         self.rows_frames = []  # TODO: probably gonna end up unused
         self.columns = []  # not used?
         self.buttons, self.undistributed_buttons, self.lethal_buttons = [], [], []  # lethal_buttons not used?
+        self.buttons_xy = {}
         self.flagged_buttons = 0
         self.button_uids = [*reversed(list(range(1, self.target_rows * self.target_columns + 1)))]
         self.generate_status_frame()
@@ -171,6 +172,7 @@ class BoardFactory:
         self.make_columns()
         self.distribute_mines()
         self.count_neighbours()
+        self.map_buttons_xy()
         self.any_leftclicked = False
         self.start_helper = tk.Button(preset_frame, text='Free first move!', bg='green', command=self.free_first_move)
         self.start_helper.pack(side='left')
@@ -211,10 +213,10 @@ class BoardFactory:
             self.rows[-1].frame.pack(side='top')
         for x in self.rows:
             self.rows_frames.append(x.frame)
-            print(x.frame, end=' ')
-        print('\n')
-        print('rows: ', self.rows)
-        print('rows_frames: ', self.rows_frames)
+        #     print(x.frame, end=' ')
+        # print('\n')
+        # print('rows: ', self.rows)
+        # print('rows_frames: ', self.rows_frames)
 
     def make_columns(self):
         while self.undistributed_columns > 0:
@@ -226,7 +228,7 @@ class BoardFactory:
             self.undistributed_columns -= 1
         for x in self.buttons:
             x.get_xpos()
-            print(x.button, end=' ')
+            # print(x.button, end=' ')
 
     def distribute_mines(self):
         shuffle(self.buttons)
@@ -284,6 +286,11 @@ class BoardFactory:
                             x.neighbour_buttons.append(a)
                             if a.lethal:
                                 x.neighbour_mines += 1
+
+    def map_buttons_xy(self):
+        for a in self.buttons:
+            self.buttons_xy[str(a.x) + ',' + str(a.y)] = a
+        print('batons: ', self.buttons_xy)
 
     def free_first_move(self):
         if not self.any_leftclicked:
