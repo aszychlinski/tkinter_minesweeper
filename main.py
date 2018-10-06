@@ -168,6 +168,7 @@ class BoardFactory:
         self.generate_status_frame()
         self.gameframe = GameFrame(root)
         self.gameframe.pack(side='top')
+        self.fieldbutton_under_restart_button = None
         self.make_rows()
         self.make_columns()
         self.distribute_mines()
@@ -176,10 +177,23 @@ class BoardFactory:
         self.any_leftclicked = False
         self.start_helper = tk.Button(preset_frame, text='Free first move!', bg='green', command=self.free_first_move)
         self.start_helper.pack(side='left')
+        self.start_helper.bind('<Down>', self.down_from_start_helper)
         tooltip.bind_widget(self.start_helper, balloonmsg='Reveal a randomly chosen field from among those with the '
                                                           'least adjacent mines.\nAvailable only if no fields have been'
                                                           ' revealed yet.')
         error_label.label.config(text='', bg=defaultbg)
+        self.start_helper.focus_set()
+
+    def down_from_start_helper(self, event_info_which_could_be_used_but_isnt_because_were_handling_only_one_input):
+        self.restart_button.button.focus_set()
+
+    def arrows_from_restart(self, event_info_which_surprisingly_is_used):
+        event_info = str(event_info_which_surprisingly_is_used).split(' ')
+        direction = [x.replace('keysym=', '') for x in event_info if 'keysym=' in x][0]
+        if direction == 'Up':
+            self.start_helper.focus_set()
+        elif direction == 'Down':
+            self.fieldbutton_under_restart_button.button.focus_set()
 
     def generate_status_frame(self):
         self.status_frame = tk.Frame(root)
@@ -202,6 +216,9 @@ class BoardFactory:
         self.restart_button.button.config(font='Wingdings', bg='yellow')
         self.restart_button.button.pack(side='top')
         tooltip.bind_widget(self.restart_button.button, balloonmsg='Restart game using current board attributes.')
+
+        self.restart_button.button.bind('<Up>', self.arrows_from_restart)
+        self.restart_button.button.bind('<Down>', self.arrows_from_restart)
 
         self.status_frame.pack(side='top', fill='x')
 
@@ -228,7 +245,13 @@ class BoardFactory:
             self.undistributed_columns -= 1
         for x in self.buttons:
             x.get_xpos()
-            # print(x.button, end=' ')
+        # if self.target_columns % 2 == 1:
+        #     fieldbutton_under_restart_button_uid = self.rows[0].mybuttons[self.target_columns // 2]
+        # else:
+        fieldbutton_under_restart_button_uid = self.rows[0].mybuttons[self.target_columns // 2]
+        for x in self.buttons:  # shameful display but too weary to refactor count_neighbours
+            if x.uid == fieldbutton_under_restart_button_uid:
+                self.fieldbutton_under_restart_button = x
 
     def distribute_mines(self):
         shuffle(self.buttons)
