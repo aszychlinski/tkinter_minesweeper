@@ -159,6 +159,7 @@ class BoardFactory:
         self.target_mines, self.undistributed_mines = int(mines), int(mines)
         self.target_buttons = self.target_rows * self.target_columns
         self.rows = []
+        self.rows_frames = []  # TODO: probably gonna end up unused
         self.columns = []  # not used?
         self.buttons, self.undistributed_buttons, self.lethal_buttons = [], [], []  # lethal_buttons not used?
         self.flagged_buttons = 0
@@ -209,7 +210,11 @@ class BoardFactory:
             self.rows[-1].rownum = len(self.rows) - 1
             self.rows[-1].frame.pack(side='top')
         for x in self.rows:
-            print(x.frame.master)
+            self.rows_frames.append(x.frame)
+            print(x.frame, end=' ')
+        print('\n')
+        print('rows: ', self.rows)
+        print('rows_frames: ', self.rows_frames)
 
     def make_columns(self):
         while self.undistributed_columns > 0:
@@ -221,7 +226,7 @@ class BoardFactory:
             self.undistributed_columns -= 1
         for x in self.buttons:
             x.get_xpos()
-            print(x, x.button, end=' ')
+            print(x.button, end=' ')
 
     def distribute_mines(self):
         shuffle(self.buttons)
