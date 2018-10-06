@@ -46,12 +46,12 @@ class TimerThread(th.Thread):
     def __init__(self):
         th.Thread.__init__(self)
         self.value = 0
-        self.exit = False
+        self.restart = False
 
     def run(self):
-        while not FieldButton.game_over and not self.exit:
+        while not FieldButton.game_over and not self.restart:
             sleep(1)
-            if not FieldButton.game_over and not self.exit:
+            if not FieldButton.game_over and not self.restart:
                 self.value += 1
                 try:
                     board.time_elapsed_var.set(self.value)
@@ -90,7 +90,7 @@ class ConfigConfirm:
                 x.button.destroy()
             for y in board.rows:
                 y.destroy()
-            board.timer.exit = True
+            board.timer.restart = True
             board.start_helper.destroy()
             board.status_frame.destroy()
             board.gameframe.destroy()
