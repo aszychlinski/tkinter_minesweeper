@@ -89,7 +89,7 @@ class ConfigConfirm:
             for x in board.buttons:
                 x.button.destroy()
             for y in board.rows:
-                y.destroy()
+                y.frame.destroy()
             board.timer.restart = True
             board.start_helper.destroy()
             board.status_frame.destroy()
@@ -138,9 +138,9 @@ class GameFrame(tk.Frame):
         return 'GameFrame'
 
 
-class GameRow(tk.Frame):
-    def __init__(self, master=None, cnf={}, **kw):  # TODO: this is likely wrong :(
-        super().__init__()
+class GameRow:
+    def __init__(self, master, name):
+        self.frame = tk.Frame(master=master, name=name)
         self.mybuttons = []
         self.rownum = 0
 
@@ -163,6 +163,7 @@ class BoardFactory:
         self.flagged_buttons = 0
         self.button_uids = [*reversed(list(range(1, self.target_rows * self.target_columns + 1)))]
         self.gameframe = GameFrame(root)
+        self.gameframe.pack(side='bottom')
         self.generate_status_frame()
         self.make_rows()
         self.make_columns()
@@ -202,9 +203,12 @@ class BoardFactory:
 
     def make_rows(self):
         for x in range(self.target_rows):
-            self.rows.append(GameRow(self.gameframe))
+            name = 'r' + str(len(self.rows) + 1)
+            self.rows.append(GameRow(self.gameframe, name))
             self.rows[-1].rownum = len(self.rows) - 1
-            self.rows[-1].pack(side='top')
+            self.rows[-1].frame.pack(side='top')
+        for x in self.rows:
+            print(x.frame.master)
 
     def make_columns(self):
         while self.undistributed_columns > 0:
@@ -216,6 +220,7 @@ class BoardFactory:
             self.undistributed_columns -= 1
         for x in self.buttons:
             x.get_xpos()
+            print(x, x.button, end=' ')
 
     def distribute_mines(self):
         shuffle(self.buttons)
@@ -324,7 +329,7 @@ class FieldButton:
         self.x = 0
         self.click_pending = False
         self.click_aborted = False
-        self.button = tk.Button(master, height=1, width=2, bg='gray90', font='Wingdings')
+        self.button = tk.Button(master.frame, height=1, width=2, bg='gray90', font='Wingdings', name=self.uid)
         self.button.pack()
         self.button.bind("<Button-1>", self.start_click)
         self.button.bind("<Leave>", self.abort_click)
