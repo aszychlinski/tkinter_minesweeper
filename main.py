@@ -290,7 +290,6 @@ class BoardFactory:
     def map_buttons_xy(self):
         for a in self.buttons:
             self.buttons_xy[str(a.x) + ',' + str(a.y)] = a
-        print('batons: ', self.buttons_xy)
 
     def free_first_move(self):
         if not self.any_leftclicked:
@@ -298,7 +297,7 @@ class BoardFactory:
                 if x.lethal or x.clicks % 3 == 1:
                     continue
                 else:
-                    x.leftclick()
+                    x.leftclick('dummy_event_info')
                     break
 
     def lose(self):
@@ -348,9 +347,40 @@ class FieldButton:
         self.button.bind("<Leave>", self.abort_click)
         self.button.bind("<ButtonRelease-1>", self.resolve_click)
         self.button.bind("<Button-3>", self.rightclick)
+        self.button.bind("<Left>", self.move_focus)
+        self.button.bind("<Up>", self.move_focus)
+        self.button.bind("<Right>", self.move_focus)
+        self.button.bind("<Down>", self.move_focus)
+        self.button.bind("<space>", self.leftclick)
+        self.button.bind("<Control_L>", self.rightclick)
+        self.button.bind("<Alt_L>", self.rightclick)
 
     def __repr__(self):
         return self.uid
+
+    def move_focus(self, event_info_which_surprisingly_is_used):
+        event_info = str(event_info_which_surprisingly_is_used).split(' ')
+        direction = [x.replace('keysym=', '') for x in event_info if 'keysym=' in x]
+        assert len(direction) == 1, 'Multiple directions in Fieldbutton.move_focus'  # not necessary but strangely fun
+        direction = direction[0]
+        if direction == 'Left':
+            target = str(self.x - 1) + ',' + str(self.y)
+            if target in board.buttons_xy.keys():
+                board.buttons_xy[target].button.focus_set()
+        if direction == 'Up':
+            target = str(self.x) + ',' + str(self.y - 1)
+            if self.y == 0:
+                board.restart_button.button.focus_set()
+            elif target in board.buttons_xy.keys():
+                board.buttons_xy[target].button.focus_set()
+        if direction == 'Right':
+            target = str(self.x + 1) + ',' + str(self.y)
+            if target in board.buttons_xy.keys():
+                board.buttons_xy[target].button.focus_set()
+        if direction == 'Down':
+            target = str(self.x) + ',' + str(self.y + 1)
+            if target in board.buttons_xy.keys():
+                board.buttons_xy[target].button.focus_set()
 
     def start_click(self, event_info_which_is_not_used):
         if not self.game_over:
@@ -364,13 +394,13 @@ class FieldButton:
 
     def resolve_click(self, event_info_which_is_not_used):
         if self.click_pending and not self.click_aborted:
-            self.leftclick()
+            self.leftclick('dummy_event_info')
             if not self.game_over:
                 board.restart_button.button.config(text='J')
         else:
             self.click_pending, self.click_aborted = False, False
 
-    def leftclick(self):
+    def leftclick(self, event_info_which_is_not_used):
         border_set = set()
         if self.clicks % 3 == 1 or self.game_over or self.revealed:
             pass
@@ -385,12 +415,12 @@ class FieldButton:
             if self.neighbour_mines == 0:
                 for x in self.neighbour_buttons:
                     if x.neighbour_mines == 0 and not x.lethal and not x.revealed:
-                        x.leftclick()
+                        x.leftclick('dummy_event_info')
                     elif not x.lethal and not x.revealed:
                         border_set.add(x)
             for y in border_set:
                 if not y.revealed:
-                    y.leftclick()
+                    y.leftclick('dummy_event_info')
             if not board.any_leftclicked:
                 board.any_leftclicked = True
                 board.timer.start()
