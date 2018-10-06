@@ -262,7 +262,7 @@ class BoardFactory:
             self.lethal_buttons.append(temp)
             self.undistributed_mines -= 1
 
-    def count_neighbours(self):
+    def count_neighbours(self):  # TODO: refactor this? coming from GameRow.mybuttons :/
         for x in self.buttons:
             if x.lethal:
                 pass
