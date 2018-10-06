@@ -141,6 +141,7 @@ class GameFrame(tk.Frame):
 class GameRow:
     def __init__(self, master, name):
         self.frame = tk.Frame(master=master, name=name)
+        self.frame.pack(side='top')
         self.mybuttons = []
         self.rownum = 0
 
@@ -162,9 +163,9 @@ class BoardFactory:
         self.buttons, self.undistributed_buttons, self.lethal_buttons = [], [], []  # lethal_buttons not used?
         self.flagged_buttons = 0
         self.button_uids = [*reversed(list(range(1, self.target_rows * self.target_columns + 1)))]
-        self.gameframe = GameFrame(root)
-        self.gameframe.pack(side='bottom')
         self.generate_status_frame()
+        self.gameframe = GameFrame(root)
+        self.gameframe.pack(side='top')
         self.make_rows()
         self.make_columns()
         self.distribute_mines()
