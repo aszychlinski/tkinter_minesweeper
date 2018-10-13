@@ -374,7 +374,7 @@ class FieldButton:
     def __init__(self, master, uid):
         self.uid = 'b' + str(uid)
         self.revealed = False
-        self.contains_mine = False  # TODO: rename to contains_mine (via replace!)
+        self.contains_mine = False
         self.clicks = 0
         self.neighbour_mines = 0
         self.neighbour_buttons = []
