@@ -193,7 +193,6 @@ class BoardFactory:
         self.target_mines, self.undistributed_mines = int(mines), int(mines)
         self.target_buttons = self.target_rows * self.target_columns
         self.rows = []
-        self.rows_frames = []  # TODO: probably gonna end up unused
         self.columns = []  # not used?
         self.buttons, self.undistributed_buttons, self.lethal_buttons = [], [], []  # lethal_buttons not used?
         self.buttons_xy = {}
@@ -262,12 +261,6 @@ class BoardFactory:
             self.rows.append(GameRow(self.gameframe, name))
             self.rows[-1].rownum = len(self.rows) - 1
             self.rows[-1].frame.pack(side='top')
-        for x in self.rows:
-            self.rows_frames.append(x.frame)
-        #     print(x.frame, end=' ')
-        # print('\n')
-        # print('rows: ', self.rows)
-        # print('rows_frames: ', self.rows_frames)
 
     def make_columns(self):
         while self.undistributed_columns > 0:
@@ -279,11 +272,8 @@ class BoardFactory:
             self.undistributed_columns -= 1
         for x in self.buttons:
             x.get_xpos()
-        # if self.target_columns % 2 == 1:
-        #     fieldbutton_under_restart_button_uid = self.rows[0].mybuttons[self.target_columns // 2]
-        # else:
         fieldbutton_under_restart_button_uid = self.rows[0].mybuttons[self.target_columns // 2]
-        for x in self.buttons:  # shameful display but too weary to refactor count_neighbours
+        for x in self.buttons:
             if x.uid == fieldbutton_under_restart_button_uid:
                 self.fieldbutton_under_restart_button = x
 
@@ -296,7 +286,7 @@ class BoardFactory:
             self.lethal_buttons.append(temp)
             self.undistributed_mines -= 1
 
-    def count_neighbours(self):  # TODO: refactor this? coming from GameRow.mybuttons :/
+    def count_neighbours(self):
         for x in self.buttons:
             if x.lethal:
                 pass
@@ -509,7 +499,6 @@ class FieldButton:
         self.x = self.master.mybuttons.index(self.uid)
 
 
-# top-of-screen config area
 preset_frame = tk.Frame(root)
 preset_sizes = ConfigLabel(preset_frame, 'Preset sizes: ')
 demo_size = ConfigConfirm(preset_frame, 'Demo', True, 10, 10, 5)
