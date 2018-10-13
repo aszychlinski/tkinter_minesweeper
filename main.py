@@ -60,14 +60,14 @@ def toggle_about(event_info_which_is_not_used):
                                      text='https://github.com/aszychlinski/tkinter_minesweeper')
         about_github_link.pack(side='left')
         about_github_link.bind("<Button-1>", open_github)
-        about_github_link_desc = tk.Label(link1_frame, text=' - view the repo page and sourcecode files')
+        about_github_link_desc = tk.Label(link1_frame, text='- view the repo page and sourcecode files')
         about_github_link_desc.pack(side='left')
 
         about_issues_link = tk.Label(link2_frame, font=default_underlined, fg='blue',
                                      text='https://github.com/aszychlinski/tkinter_minesweeper/issues')
         about_issues_link.pack(side='left')
         about_issues_link.bind("<Button-1>", open_issues)
-        about_issues_link_desc = tk.Label(link2_frame, text=' - issues, suggestions, feedback')
+        about_issues_link_desc = tk.Label(link2_frame, text='- issues, suggestions, feedback')
         about_issues_link_desc.pack(side='left')
 
         about.protocol("WM_DELETE_WINDOW", close_popup_delete_reference)
