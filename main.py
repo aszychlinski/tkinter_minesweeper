@@ -281,12 +281,12 @@ class BoardFactory:
         self.undistributed_buttons = self.buttons[:]
         while self.undistributed_mines > 0:
             temp = self.undistributed_buttons.pop()
-            temp.lethal = True
+            temp.contains_mine = True
             self.undistributed_mines -= 1
 
     def count_neighbours(self):
         for x in self.buttons:
-            if x.lethal:
+            if x.contains_mine:
                 pass
             else:
                 none_above, none_below, none_left, none_right = False, False, False, False
@@ -329,7 +329,7 @@ class BoardFactory:
                     for a in self.buttons:
                         if a.uid == z:
                             x.neighbour_buttons.append(a)
-                            if a.lethal:
+                            if a.contains_mine:
                                 x.neighbour_mines += 1
 
     def map_buttons_xy(self):
@@ -339,7 +339,7 @@ class BoardFactory:
     def free_first_move(self):
         if not self.any_leftclicked:
             for x in sorted(self.buttons, key=lambda button: button.neighbour_mines):
-                if x.lethal or x.clicks % 3 == 1:
+                if x.contains_mine or x.clicks % 3 == 1:
                     continue
                 else:
                     x.leftclick('dummy_event_info')
@@ -348,7 +348,7 @@ class BoardFactory:
     def lose(self):
         FieldButton.game_over = True
         for x in self.buttons:
-            if x.lethal:
+            if x.contains_mine:
                 if x.clicks % 3 != 1:
                     x.button.config(text='M')
                 else:
@@ -374,7 +374,7 @@ class FieldButton:
     def __init__(self, master, uid):
         self.uid = 'b' + str(uid)
         self.revealed = False
-        self.lethal = False  # TODO: rename to contains_mine (via replace!)
+        self.contains_mine = False  # TODO: rename to contains_mine (via replace!)
         self.clicks = 0
         self.neighbour_mines = 0
         self.neighbour_buttons = []
@@ -449,7 +449,7 @@ class FieldButton:
         border_set = set()
         if self.clicks % 3 == 1 or self.game_over or self.revealed:
             pass
-        elif self.lethal:
+        elif self.contains_mine:
             self.button.config(bg='red')
             board.lose()
         else:
@@ -459,9 +459,9 @@ class FieldButton:
                                bg=self.neighbour_colours[self.neighbour_mines][1])
             if self.neighbour_mines == 0:
                 for x in self.neighbour_buttons:
-                    if x.neighbour_mines == 0 and not x.lethal and not x.revealed:
+                    if x.neighbour_mines == 0 and not x.contains_mine and not x.revealed:
                         x.leftclick('dummy_event_info')
-                    elif not x.lethal and not x.revealed:
+                    elif not x.contains_mine and not x.revealed:
                         border_set.add(x)
             for y in border_set:
                 if not y.revealed:
