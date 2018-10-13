@@ -193,8 +193,7 @@ class BoardFactory:
         self.target_mines, self.undistributed_mines = int(mines), int(mines)
         self.target_buttons = self.target_rows * self.target_columns
         self.rows = []
-        self.columns = []  # not used?
-        self.buttons, self.undistributed_buttons, self.lethal_buttons = [], [], []  # lethal_buttons not used?
+        self.buttons, self.undistributed_buttons = [], []
         self.buttons_xy = {}
         self.flagged_buttons = 0
         self.button_uids = [*reversed(list(range(1, self.target_rows * self.target_columns + 1)))]
@@ -283,7 +282,6 @@ class BoardFactory:
         while self.undistributed_mines > 0:
             temp = self.undistributed_buttons.pop()
             temp.lethal = True
-            self.lethal_buttons.append(temp)
             self.undistributed_mines -= 1
 
     def count_neighbours(self):
