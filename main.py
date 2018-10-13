@@ -1,13 +1,17 @@
 import tkinter as tk
+import tkinter.font as tkf
 import tkinter.tix as tkx
 import threading as th
 from random import shuffle
 from time import sleep
+from webbrowser import open_new_tab
 
 
 root = tkx.Tk()
 root.focus()
-root.title('F1 for help <> hover for tooltips')
+root.title('F1 for help  █  hover for tooltips  █  ←↑→↓, SPACE, CTRL/ALT')
+default_underlined = tkf.Font(font='TkDefaultFont')
+default_underlined.configure(underline=True)
 defaultbg = root.cget('bg')
 previous_board_info = []
 
@@ -22,10 +26,16 @@ def toggle_about(event_info_which_is_not_used):
     if 'about' in globals().keys():
         close_popup_delete_reference()
     else:
+        def open_github(event_info_which_is_not_used):
+            open_new_tab('https://github.com/aszychlinski/tkinter_minesweeper')
+
+        def open_issues(event_info_which_is_not_used):
+            open_new_tab('https://github.com/aszychlinski/tkinter_minesweeper/issues')
+
         about = tk.Toplevel(root)
         about.title('F1 to close help')
         about.bind('<F1>', toggle_about)
-        msg = tk.Label(
+        about_main = tk.Label(
             about, justify='left', padx=10, pady=10,
             text='Left click a field to reveal it. Right click a field to flag it as containing a mine.'
                  '\n\nA revealed field may display a number. This number describes the amount of adjacent mines.'
@@ -34,8 +44,32 @@ def toggle_about(event_info_which_is_not_used):
                  '\n\nYou lose if you reveal a field containing a mine.'
                  '\n\nThe "Free first move!" button is available only if no field has been revealed yet.'
                  '\nIt reveals a randomly chosen field from among those containing the least adjacent mines.'
-                 '\n\nThe yellow button above the game board generates a new board with the previously used values.')
-        msg.pack(side='top')
+                 '\n\nThe yellow button above the game board generates a new board with the previously used values.'
+                 '\n\n\nYou can also use the arrow keys to play! Once a board is generated, keyboard focus is on the'
+                 '\n"Free first move!" button. Press Space to use the button, then use the down arrow to get down '
+                 '\nfrom there onto the playing field. Spacebar to reveal a field, left CTRL or any ALT to flag.'
+                 '\nFrom the top row of the minefield you can also get up onto the Restart and first move buttons.\n')
+        about_main.pack(side='top')
+        about_visit = tk.Label(about, text='Visit my GitHub!')
+        about_visit.pack(side='top')
+        link1_frame, link2_frame = tk.Frame(about), tk.Frame(about)
+        link1_frame.pack(side='top', fill='x')
+        link2_frame.pack(side='top', fill='x')
+
+        about_github_link = tk.Label(link1_frame, font=default_underlined, fg='blue',
+                                     text='https://github.com/aszychlinski/tkinter_minesweeper')
+        about_github_link.pack(side='left')
+        about_github_link.bind("<Button-1>", open_github)
+        about_github_link_desc = tk.Label(link1_frame, text=' - view the repo page and sourcecode files')
+        about_github_link_desc.pack(side='left')
+
+        about_issues_link = tk.Label(link2_frame, font=default_underlined, fg='blue',
+                                     text='https://github.com/aszychlinski/tkinter_minesweeper/issues')
+        about_issues_link.pack(side='left')
+        about_issues_link.bind("<Button-1>", open_issues)
+        about_issues_link_desc = tk.Label(link2_frame, text=' - issues, suggestions, feedback')
+        about_issues_link_desc.pack(side='left')
+
         about.protocol("WM_DELETE_WINDOW", close_popup_delete_reference)
 
 
