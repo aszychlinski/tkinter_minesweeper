@@ -6,7 +6,7 @@ COMPLETE - minesweeper port done in tkinter. Pretty happy with how it came out.
 
 :two: main_no_comments.py - same as `main` but without comments or docstrings
 
-:three: main_no_tkx.py - same as the no_comments version but also without the tkinter.tkx extension (and thus without tooltips)
+:three: main_no_tkx.py - same as the no_comments version but also without the tkinter.tix extension (and thus without tooltips)
 
 ## Description
 After completing my tkinter_bingo I wanted to do something a bit more complex... but not *too* complex.
@@ -24,7 +24,7 @@ my global namespace is **me**. :smiling_imp:
 * use of the `threading` module to make a timer :watch:. It was my first contact with multithreading and I'm surprised with how well that went. 
 * My comment and docstring formatting is now much closer to what `PEP 8` and `PEP 257` prescribe. Full, capitalised sentences, double spaces, triple-double quotes, the whole shtick. :blue_book:
 * fully realized :arrow_left::arrow_up::arrow_right::arrow_down::ok: support for the gameplay!
-* this was arguably the weirdest thing, but... Most of the development was done on the basic version of tkinter, right? And very late in the project I randomly stumbled upon the .tkx extension. And it had tooltips! And they were incredibly shiny!!! I managed to resist the thought for about a day and a half. :see_no_evil: Then I swapped out the `root` from basic tk to a root instanced from tk.tkx. But all of the original widgets are still tk... assigned to a tk.tkx parent. Apparently they are compatible enough that it's not causing problems, but I was scared at first.
+* this was arguably the weirdest thing, but... Most of the development was done on the basic version of tkinter, right? And very late in the project I randomly stumbled upon the .tix extension. And it had tooltips! And they were incredibly shiny!!! I managed to resist the thought for about a day and a half. :see_no_evil: Then I swapped out the `root` from basic tk to a root instanced from tk.tix. But all of the original widgets are still tk... assigned to a tk.tix parent. Apparently they are compatible enough that it's not causing problems, but I was scared at first.
 
 There are also shortcomings that I'm aware of. :weary:
 
@@ -36,7 +36,7 @@ But overall I am *really* happy with the result! I already have more plans for t
 
 ## Compiling to .exe
 
-`pyinstaller` works for this project, however it would not add tkinter.tkx to the package on its own.
+`pyinstaller` works for this project, however it would not add tkinter.tix to the package on its own.
 To get a working .exe I ended up using:
 
 `pyinstaller --add-data "tix8.4.3;tix8.4.3" -F -y -w --clean main.py`
