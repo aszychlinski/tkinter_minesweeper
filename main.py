@@ -133,7 +133,6 @@ class ConfigEntry:
 
 class ConfigConfirm:
     """Wrapper for tk.Button which also passes row, column and mine amounts to BoardFactory."""
-
     def __init__(self, master, text, preset, *args):
         self.button = tk.Button(master, command=self.forward_values, text=text)
         self.button.pack(side='left')

@@ -108,7 +108,6 @@ class ConfigEntry:
 
 
 class ConfigConfirm:
-
     def __init__(self, master, text, preset, *args):
         self.button = tk.Button(master, command=self.forward_values, text=text)
         self.button.pack(side='left')
