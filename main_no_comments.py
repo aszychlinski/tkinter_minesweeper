@@ -151,6 +151,9 @@ class ConfigConfirm:
                         < int(self.bound_entries[2].entry.get()):
                     errormessage = 'More mines than fields.'
                     raise ValueError
+                if 0 in (int(self.bound_entries[0].entry.get()), int(self.bound_entries[1].entry.get())):
+                    errormessage = 'Rows and columns cannot be zero.'
+                    raise ValueError
                 if int(self.bound_entries[0].entry.get()) > 18 or int(self.bound_entries[1].entry.get()) > 34:
                     errormessage = 'Argument exceeds maximum.'
                     raise ValueError
